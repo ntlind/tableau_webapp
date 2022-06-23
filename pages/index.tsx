@@ -15,6 +15,14 @@ const dimensions = [
   'dimension3'
 ]
 
+let category_names = {
+  0: "Metrics",
+  1: "Dimensions",
+  2: "Y-Axis",
+  3: "X-Axis",
+  4: "Grouper"
+}
+
 const getItems = (array, offset = 0) =>
   array.map(k => ({
     id: `item-${k + offset}-${new Date().getTime()}`,
@@ -45,25 +53,24 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 
   return result;
 };
-const grid = 8;
 
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
+const copy = (source, destination, droppableSource, droppableDestination) => {
+  const sourceClone = Array.from(source);
+  const destClone = Array.from(destination);
+  const item = sourceClone[droppableSource.index];
+  console.log(destination)
+  if (destClone.some(e => e.id === `item-${item.content}`)) {
+  } else {
+    destClone.splice(droppableDestination.index, 0, { ...item, id: `item-${item.content}` });
+  }
 
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
+  const result = {};
+  result[droppableSource.droppableId] = sourceClone;
+  result[droppableDestination.droppableId] = destClone;
 
-  // styles we need to apply on draggables
-  ...draggableStyle
-});
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: grid,
-  width: 250
-});
+  return result;
+};
+
 
 function QuoteApp() {
   let isInitialMount = useRef(true)
@@ -71,12 +78,12 @@ function QuoteApp() {
 
   useEffect(() => {
     if (isInitialMount.current) {
-      setState([...state, getItems(metrics), getItems(dimensions), []])
+      setState([...state, getItems(metrics), getItems(dimensions), [], [], []])
       isInitialMount.current = false
     }
   })
 
-  function onDragEnd(result) {
+  function onDragEndDuplicate(result) {
     const { source, destination } = result;
 
     // dropped outside the list
@@ -92,45 +99,30 @@ function QuoteApp() {
       newState[sInd] = items;
       setState(newState);
     } else {
-      const result = move(state[sInd], state[dInd], source, destination);
+      const result = copy(state[sInd], state[dInd], source, destination);
       const newState = [...state];
       newState[sInd] = result[sInd];
       newState[dInd] = result[dInd];
 
-      setState(newState.filter(group => group.length));
+      setState(newState);
     }
   }
 
   return (
-    <div>
-      <button
-        type="button"
-        onClick={() => {
-          setState([...state, []]);
-        }}
-      >
-        Add new group
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          setState([...state, getItems(1)]);
-        }}
-      >
-        Add new item
-      </button>
+    <div className='w-60 fixed left-0 h-screen border-r border-gray-200 z-1 shadow-lg'>
       <div className='flex flex-col'>
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEndDuplicate}>
           {state.map((el, ind) => (
-            <Droppable key={ind} droppableId={`${ind}`} isDropDisabled={ind == 2 ? false : true}>
+            <Droppable key={ind} droppableId={`${ind}`} isDropDisabled={ind >= 2 ? false : true}>
               {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
-                  style={getListStyle(snapshot.isDraggingOver)}
+                  className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-8" : "bg-white p-4 pb-8"}
                   {...provided.droppableProps}
                 >
-                  {console.log(el)}
-                  {ind == 0 ? 'Metrics' : (ind == 1 ? 'Dimensions' : 'Other')}
+                  <div className='font-bold underline'>
+                    {category_names[ind]}
+                  </div>
                   {el.map((item, index) => (
                     <Draggable
                       key={item.id}
@@ -142,10 +134,7 @@ function QuoteApp() {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          style={getItemStyle(
-                            snapshot.isDragging,
-                            provided.draggableProps.style
-                          )}
+                          className={snapshot.isDragging ? "bg-blue-900 text-white select-none p-2 ml-4 rounded-xl" : "bg-white select-none p-2 ml-4"}
                         >
                           <div>
                             {item.content}
@@ -174,7 +163,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='flex flex-col h-screen w-screen bg-red-50 items-center justify-center'>
+      <main>
         <div className='w-screen-1/2'><QuoteApp /></div>
 
       </main>
