@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Papa from 'papaparse'
 
 // fake data generator
 const metrics = [
@@ -75,13 +76,23 @@ const copy = (source, destination, droppableSource, droppableDestination) => {
 function QuoteApp() {
   let isInitialMount = useRef(true)
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
+  const [data, setData] = useState(null); // has to start out empty or the droppable won't work
 
   useEffect(() => {
+    async function fetchData(url: string, setter: any) {
+      const response = await fetch(url)
+        .then(response => response.text())
+        .then(v => Papa.parse(v))
+        .catch(err => console.log(err))
+      setter(response)
+    }
+
     if (isInitialMount.current) {
       setState([...state, getItems(metrics), getItems(dimensions), [], [], []])
+      fetchData('https://raw.githubusercontent.com/facebook/prophet/main/examples/example_retail_sales.csv', setData)
       isInitialMount.current = false
     }
-  })
+  }, [data])
 
   function onDragEndDuplicate(result) {
     const { source, destination } = result;
@@ -120,6 +131,7 @@ function QuoteApp() {
                   className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-8" : "bg-white p-4 pb-8"}
                   {...provided.droppableProps}
                 >
+                  <div className={ind == 2 ? "border-t-2 border-gray-200 pt-8" : null}></div>
                   <div className='font-bold underline'>
                     {category_names[ind]}
                   </div>
