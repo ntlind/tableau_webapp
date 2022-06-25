@@ -1,76 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState, useRef } from 'react';
+// @ts-ignore
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import Papa from 'papaparse'
-
-// fake data generator
-const metrics = [
-  'metric1',
-  'metric2',
-  'metric3'
-]
-
-const dimensions = [
-  'dimension1',
-  'dimension3'
-]
-
-let category_names = {
-  0: "Metrics",
-  1: "Dimensions",
-  2: "Y-Axis",
-  3: "X-Axis",
-  4: "Grouper"
-}
-
-const getItems = (array, offset = 0) =>
-  array.map(k => ({
-    id: `item-${k + offset}-${new Date().getTime()}`,
-    content: `${k}`
-  }));
-
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
-/**
- * Moves an item from one list to another list.
- */
-const move = (source, destination, droppableSource, droppableDestination) => {
-  const sourceClone = Array.from(source);
-  const destClone = Array.from(destination);
-  const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-  destClone.splice(droppableDestination.index, 0, removed);
-
-  const result = {};
-  result[droppableSource.droppableId] = sourceClone;
-  result[droppableDestination.droppableId] = destClone;
-
-  return result;
-};
-
-const copy = (source, destination, droppableSource, droppableDestination) => {
-  const sourceClone = Array.from(source);
-  const destClone = Array.from(destination);
-  const item = sourceClone[droppableSource.index];
-  console.log(destination)
-  if (destClone.some(e => e.id === `item-${item.content}`)) {
-  } else {
-    destClone.splice(droppableDestination.index, 0, { ...item, id: `item-${item.content}` });
-  }
-
-  const result = {};
-  result[droppableSource.droppableId] = sourceClone;
-  result[droppableDestination.droppableId] = destClone;
-
-  return result;
-};
+import { getIndexOfString, copy, category_names, getItems, reorder, fetchData, getTypeClassification } from '../components/DragAndDrop/DragAndDrop'
 
 
 function QuoteApp() {
@@ -79,22 +12,25 @@ function QuoteApp() {
   const [data, setData] = useState(null); // has to start out empty or the droppable won't work
 
   useEffect(() => {
-    async function fetchData(url: string, setter: any) {
-      const response = await fetch(url)
-        .then(response => response.text())
-        .then(v => Papa.parse(v))
-        .catch(err => console.log(err))
-      setter(response)
-    }
-
     if (isInitialMount.current) {
-      setState([...state, getItems(metrics), getItems(dimensions), [], [], []])
       fetchData('https://raw.githubusercontent.com/facebook/prophet/main/examples/example_retail_sales.csv', setData)
       isInitialMount.current = false
     }
-  }, [data])
 
-  function onDragEndDuplicate(result) {
+    if (data && (state.length === 0)) {
+      let cols = data && data[0]
+      let second_row: Array<string> = data && data[1]
+      let data_types = second_row.map(x => getTypeClassification(x))
+
+      let metric_array = Array(cols[getIndexOfString(data_types, 'metric')])
+      let dimension_array = Array(cols[getIndexOfString(data_types, 'dimension')])
+      // @ts-ignore
+      setState([...state, getItems(metric_array), getItems(dimension_array), [], [], []])
+    }
+
+  }, [data, state])
+
+  function onDragEndDuplicate(result: any) {
     const { source, destination } = result;
 
     // dropped outside the list
@@ -106,12 +42,12 @@ function QuoteApp() {
 
     if (sInd === dInd) {
       const items = reorder(state[sInd], source.index, destination.index);
-      const newState = [...state];
+      const newState: any = [...state];
       newState[sInd] = items;
       setState(newState);
     } else {
-      const result = copy(state[sInd], state[dInd], source, destination);
-      const newState = [...state];
+      let result: any = copy(state[sInd], state[dInd], source, destination);
+      const newState: any = [...state];
       newState[sInd] = result[sInd];
       newState[dInd] = result[dInd];
 
@@ -131,7 +67,7 @@ function QuoteApp() {
                   className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-8" : "bg-white p-4 pb-8"}
                   {...provided.droppableProps}
                 >
-                  <div className={ind == 2 ? "border-t-2 border-gray-200 pt-8" : null}></div>
+                  <div className={ind == 2 ? "border-t-2 border-gray-200 pt-8" : ""}></div>
                   <div className='font-bold underline'>
                     {category_names[ind]}
                   </div>
