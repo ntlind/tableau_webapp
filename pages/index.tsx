@@ -96,9 +96,10 @@ function QuoteApp() {
               )}
             </Droppable>
           ))}
+          <button className='absolute z-10 theme-button rounded left-[4.5rem] bottom-6 w-24' onClick={(e) => setState([state[0], state[1], [], [], []])}>Reset</button>
         </DragDropContext>
       </div>
-    </div>
+    </div >
   );
 }
 
