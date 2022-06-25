@@ -105,5 +105,5 @@ export async function fetchData(url: string, setter: any) {
         .then(response => response.text())
         .then(v => Papa.parse(v))
         .catch(err => console.log(err))
-    setter(response.data)
+    setter({ data: response.data, cols: response.data![0], types: response.data![1].map(x => getType(x)), classifications: response.data![1].map(x => getTypeClassification(x)) })
 }

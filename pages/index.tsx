@@ -9,7 +9,7 @@ import { getIndexOfString, copy, category_names, getItems, reorder, fetchData, g
 function QuoteApp() {
   let isInitialMount = useRef(true)
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
-  const [data, setData] = useState(null); // has to start out empty or the droppable won't work
+  const [data, setData] = useState({ data: null, cols: null, types: null, classifications: null }); // has to start out empty or the droppable won't work
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -17,13 +17,9 @@ function QuoteApp() {
       isInitialMount.current = false
     }
 
-    if (data && (state.length === 0)) {
-      let cols = data && data[0]
-      let second_row: Array<string> = data && data[1]
-      let data_types = second_row.map(x => getTypeClassification(x))
-
-      let metric_array = Array(cols[getIndexOfString(data_types, 'metric')])
-      let dimension_array = Array(cols[getIndexOfString(data_types, 'dimension')])
+    if ((data.data !== null) && (state.length === 0)) {
+      let metric_array = Array(data.cols![getIndexOfString(data.classifications!, 'metric')])
+      let dimension_array = Array(data.cols![getIndexOfString(data.classifications!, 'dimension')])
       // @ts-ignore
       setState([...state, getItems(metric_array), getItems(dimension_array), [], [], []])
     }
@@ -64,10 +60,10 @@ function QuoteApp() {
               {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
-                  className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-8" : "bg-white p-4 pb-8"}
+                  className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-6" : "bg-white p-4 pb-6"}
                   {...provided.droppableProps}
                 >
-                  <div className={ind == 2 ? "border-t-2 border-gray-200 pt-8" : ""}></div>
+                  <div className={ind == 2 ? "border-t-2 border-gray-200 pt-6" : ""}></div>
                   <div className='font-bold underline'>
                     {category_names[ind]}
                   </div>
