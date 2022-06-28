@@ -1,5 +1,6 @@
 import Papa from 'papaparse'
 import moment from "moment"
+import { CalendarIcon, AtSymbolIcon, PhoneIcon, VariableIcon, DocumentTextIcon, CalculatorIcon } from '@heroicons/react/outline'
 
 export function getIndexOfString(array: Array<any>, str: string) {
     var newArr = array.reduce(function (acc, curr, index) {
@@ -89,7 +90,8 @@ export let category_names = {
 export const getItems = (array, offset = 0) =>
     array.map(k => ({
         id: `item-${k + offset}-${new Date().getTime()}`,
-        content: `${k}`
+        content: `${k}`,
+        type: getType(k)
     }));
 
 export const reorder = (list, startIndex, endIndex) => {
@@ -101,9 +103,45 @@ export const reorder = (list, startIndex, endIndex) => {
 };
 
 export async function fetchData(url: string, setter: any) {
+
     const response = await fetch(url)
         .then(response => response.text())
         .then(v => Papa.parse(v))
         .catch(err => console.log(err))
-    setter({ data: response.data, cols: response.data![0], types: response.data![1].map(x => getType(x)), classifications: response.data![1].map(x => getTypeClassification(x)) })
+
+    let types = response.data![1].map((x) => getType(x))
+    let classifications = response.data![1].map(x => getTypeClassification(x))
+    let iconList = getTypeIconList()
+
+    let col_obj = response.data![0].reduce(function (result, item, index, array) {
+        let arr = response.data.map((value) => value[index])
+
+        result[item] = { type: { id: iconList[types[index]].index, value: types[index] }, classification: classifications[index], values: arr };
+        return result;
+    }, {})
+
+    let classification_obj = classifications.reduce(function (result, item, index, array) {
+        result[item] = response.data![0][index];
+        return result;
+    }, {})
+
+    setter({
+        cols: col_obj, classifications: classification_obj
+    })
+}
+
+export function getTypeIconList() {
+    let iconClass = "h-5 w-5 mx-auto stroke-1"
+
+    let iconMap = {
+        float: { icon: <CalculatorIcon className={iconClass} />, index: 0 },
+        integer: { icon: <VariableIcon className={iconClass} />, index: 1 },
+        date: { icon: <CalendarIcon className={iconClass} />, index: 2 },
+        // email: { icon: <AtSymbolIcon className={iconClass} />, index: 3 },
+        // phone: { icon: <PhoneIcon className={iconClass} />, index: 4 },
+        string: { icon: <DocumentTextIcon className={iconClass} />, index: 5 },
+    }
+    return (
+        iconMap
+    )
 }

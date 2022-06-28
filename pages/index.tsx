@@ -3,23 +3,22 @@ import Head from 'next/head'
 import { useEffect, useState, useRef } from 'react';
 // @ts-ignore
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { getIndexOfString, copy, category_names, getItems, reorder, fetchData, getTypeClassification } from '../components/DragAndDrop/DragAndDrop'
-
+import { getIndexOfString, copy, category_names, getItems, reorder, fetchData, getTypeIconList } from '../components/DragAndDrop/DragAndDrop'
+import CustomListBox from '../components/CustomListbox';
 
 function QuoteApp() {
   let isInitialMount = useRef(true)
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
-  const [data, setData] = useState({ data: null, cols: null, types: null, classifications: null }); // has to start out empty or the droppable won't work
+  const [data, setData] = useState({ cols: {}, classifications: null }); // has to start out empty or the droppable won't work
 
   useEffect(() => {
     if (isInitialMount.current) {
       fetchData('https://raw.githubusercontent.com/facebook/prophet/main/examples/example_retail_sales.csv', setData)
       isInitialMount.current = false
     }
-
-    if ((data.data !== null) && (state.length === 0)) {
-      let metric_array = Array(data.cols![getIndexOfString(data.classifications!, 'metric')])
-      let dimension_array = Array(data.cols![getIndexOfString(data.classifications!, 'dimension')])
+    if ((data.classifications) && (state.length === 0)) {
+      let metric_array = Array(data.classifications!['metric'])
+      let dimension_array = Array(data.classifications!['dimension'])
       // @ts-ignore
       setState([...state, getItems(metric_array), getItems(dimension_array), [], [], []])
     }
@@ -51,6 +50,15 @@ function QuoteApp() {
     }
   }
 
+  let iconList = getTypeIconList()
+  let typeChoices = Object.keys(iconList).map((key, index) => ({ value: key, id: index }))
+
+  function updateType(e: any, content: string) {
+    let newData = data
+    newData.cols[content].type = e
+    setData({ ...newData })
+  }
+
   return (
     <div className='w-60 fixed left-0 h-screen border-r border-gray-200 z-1 shadow-lg'>
       <div className='flex flex-col'>
@@ -78,9 +86,12 @@ function QuoteApp() {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className={snapshot.isDragging ? "bg-blue-900 text-white select-none p-2 ml-4 rounded-xl" : "bg-white select-none p-2 ml-4"}
+                          className={snapshot.isDragging ? "bg-blue-900 text-white select-none py-2 px-1 rounded-xl" : "bg-white select-none py-2"}
                         >
-                          <div>
+                          <div className='flex flex-row items-center'>
+                            <div className='pr-2'>
+                              <CustomListBox id={`item-${item.content}-${new Date().getTime()}`} choices={typeChoices} selected={data.cols[item.content].type} onChange={e => updateType(e, item.content)} iconMap={iconList} />
+                            </div>
                             {item.content}
                           </div>
                         </div>
