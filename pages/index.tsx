@@ -1,116 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useEffect, useState, useRef } from 'react';
-// @ts-ignore
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { getIndexOfString, copy, category_names, getItems, reorder, fetchData, getTypeIconList } from '../components/DragAndDrop/DragAndDrop'
-import CustomListBox from '../components/CustomListbox';
+import DataSelector from '../components/DataSelector'
+import BarChart from '../components/D3/Barchart'
+import { useEffect, useState } from 'react'
 
-function QuoteApp() {
-  let isInitialMount = useRef(true)
+const Home: NextPage = () => {
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
   const [data, setData] = useState({ cols: {}, classifications: null }); // has to start out empty or the droppable won't work
 
-  useEffect(() => {
-    if (isInitialMount.current) {
-      fetchData('https://raw.githubusercontent.com/facebook/prophet/main/examples/example_retail_sales.csv', setData)
-      isInitialMount.current = false
-    }
-    if ((data.classifications) && (state.length === 0)) {
-      let metric_array = Array(data.classifications!['metric'])
-      let dimension_array = Array(data.classifications!['dimension'])
-      // @ts-ignore
-      setState([...state, getItems(metric_array), getItems(dimension_array), [], [], []])
-    }
-
-  }, [data, state])
-
-  function onDragEndDuplicate(result: any) {
-    const { source, destination } = result;
-
-    // dropped outside the list
-    if (!destination) {
-      return;
-    }
-    const sInd = +source.droppableId;
-    const dInd = +destination.droppableId;
-
-    if (sInd === dInd) {
-      const items = reorder(state[sInd], source.index, destination.index);
-      const newState: any = [...state];
-      newState[sInd] = items;
-      setState(newState);
-    } else {
-      let result: any = copy(state[sInd], state[dInd], source, destination);
-      const newState: any = [...state];
-      newState[sInd] = result[sInd];
-      newState[dInd] = result[dInd];
-
-      setState(newState);
-    }
-  }
-
-  let iconList = getTypeIconList()
-  let typeChoices = Object.keys(iconList).map((key, index) => ({ value: key, id: index }))
-
-  function updateType(e: any, content: string) {
-    let newData = data
-    newData.cols[content].type = e
-    setData({ ...newData })
-  }
-
-  return (
-    <div className='w-60 fixed left-0 h-screen border-r border-gray-200 z-1 shadow-lg'>
-      <div className='flex flex-col'>
-        <DragDropContext onDragEnd={onDragEndDuplicate}>
-          {state.map((el, ind) => (
-            <Droppable key={ind} droppableId={`${ind}`} isDropDisabled={ind >= 2 ? false : true}>
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-6" : "bg-white p-4 pb-6"}
-                  {...provided.droppableProps}
-                >
-                  <div className={ind == 2 ? "border-t-2 border-gray-200 pt-6" : ""}></div>
-                  <div className='font-bold underline'>
-                    {category_names[ind]}
-                  </div>
-                  {el.map((item, index) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={snapshot.isDragging ? "bg-blue-900 text-white select-none py-2 px-1 rounded-xl" : "bg-white select-none py-2"}
-                        >
-                          <div className='flex flex-row items-center'>
-                            <div className='pr-2'>
-                              <CustomListBox id={`item-${item.content}-${new Date().getTime()}`} choices={typeChoices} selected={data.cols[item.content].type} onChange={e => updateType(e, item.content)} iconMap={iconList} />
-                            </div>
-                            {item.content}
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          ))}
-          <button className='absolute z-10 theme-button rounded left-[4.5rem] bottom-6 w-24' onClick={(e) => setState([state[0], state[1], [], [], []])}>Reset</button>
-        </DragDropContext>
-      </div>
-    </div >
-  );
-}
-
-const Home: NextPage = () => {
   return (
     <div >
       <Head>
@@ -120,13 +17,17 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <div className='w-screen-1/2'><QuoteApp /></div>
-
+        <DataSelector state={state} setState={setState} data={data} setData={setData} />
+        <div className='ml-60 bg-blue-100 h-screen w-screen'>
+          <div className='py-4 px-8 h-full w-full'>
+            <BarChart data={[1, 2, 3]} xVar={'Country'} yVar={'Value'} />
+          </div>
+        </div>
       </main>
-
-      <footer>
-        blah
-      </footer>
+      {/* 
+      <footer className='ml-60 flex items-center h-screen-1/12'>
+        graphic
+      </footer> */}
     </div>
   )
 }
