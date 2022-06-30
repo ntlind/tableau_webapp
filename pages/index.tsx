@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import DataSelector from '../components/DataSelector'
 import BarChart from '../components/D3/Barchart'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 const Home: NextPage = () => {
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
@@ -16,10 +16,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main className='h-screen w-screen'>
         <DataSelector state={state} setState={setState} data={data} setData={setData} />
-        <div className='ml-60 bg-blue-100 h-screen w-screen'>
-          <div className='py-4 px-8 h-full w-full'>
+        <div className='ml-60 bg-blue-100 h-full'>
+          <div className='p-24 h-full w-full'>
             <BarChart data={[1, 2, 3]} xVar={'Country'} yVar={'Value'} />
           </div>
         </div>

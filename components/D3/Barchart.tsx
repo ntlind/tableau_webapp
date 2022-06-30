@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
-import useWindowSize from "../CustomHooks/useWindowSize"
 
 interface IProps {
     data?: number[];
@@ -10,15 +9,20 @@ interface IProps {
 
 /* Component */
 export default function Barchart(props: IProps) {
-    let size = useWindowSize()
     const d3Container = useRef(null);
+    const parentRef = useRef(null)
+    const [height, setHeight] = useState(null)
+    const [width, setWidth] = useState(null)
+
     useEffect(
         () => {
+            let margin = { top: 80, right: 50, bottom: 90, left: 50 }
+
+            setHeight(parentRef.current.offsetHeight - margin.top - margin.bottom)
+            setWidth(parentRef.current.offsetWidth - margin.left - margin.right);
+
             d3.select("g").remove()
-            if (props.data && d3Container.current) {
-                let margin = { top: 10, right: 1, bottom: 90, left: 40 },
-                    width = size.width - 15 * 20 - margin.left - margin.right,
-                    height = size.height - margin.top - margin.bottom;
+            if (props.data && d3Container.current && height) {
 
                 const svg = d3.select(d3Container.current)
                     .append("svg")
@@ -75,12 +79,14 @@ export default function Barchart(props: IProps) {
                 svg.exit()
                     .remove();
             }
-        }, [props.data, d3Container.current])
+        }, [props.data, d3Container.current, parentRef])
 
     return (
-        <svg
-            className="d3-component w-full h-full"
-            ref={d3Container}
-        />
+        <div ref={parentRef} className='h-full w-full'>
+            <svg
+                className="d3-component w-full h-full"
+                ref={d3Container}
+            />
+        </div>
     );
 }
