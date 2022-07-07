@@ -3,10 +3,14 @@ import Head from 'next/head'
 import DataSelector from '../components/DataSelector'
 import BarChart from '../components/D3/Barchart'
 import { useEffect, useState, useRef } from 'react'
+import HeaderBar from '../components/HeaderBar'
 
 const Home: NextPage = () => {
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
-  const [data, setData] = useState({ cols: {}, classifications: null }); // has to start out empty or the droppable won't work
+  const [data, setData] = useState({ cols: {}, classifications: null, chartType: "Bar Chart" }); // has to start out empty or the droppable won't work
+
+  useEffect(() => {
+  })
 
   return (
     <div >
@@ -16,16 +20,17 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='h-screen w-screen'>
+      <main className='w-screen h-screen'>
         <DataSelector state={state} setState={setState} data={data} setData={setData} />
-        <div className='ml-60 bg-blue-100 h-full'>
-          <div className='p-24 h-full w-full'>
+        <HeaderBar state={state} setState={setState} data={data} setData={setData} />
+        <div className='h-full ml-60'>
+          <div className='w-full h-full p-24'>
             <BarChart data={[1, 2, 3]} xVar={'Country'} yVar={'Value'} />
           </div>
         </div>
       </main>
       {/* 
-      <footer className='ml-60 flex items-center h-screen-1/12'>
+      <footer className='flex items-center ml-60 h-screen-1/12'>
         graphic
       </footer> */}
     </div>

@@ -102,7 +102,7 @@ export const reorder = (list, startIndex, endIndex) => {
     return result;
 };
 
-export async function fetchData(url: string, setter: any) {
+export async function fetchData(url: string, data: any, setter: any) {
 
     const response = await fetch(url)
         .then(response => response.text())
@@ -115,7 +115,6 @@ export async function fetchData(url: string, setter: any) {
 
     let col_obj = response.data![0].reduce(function (result, item, index, array) {
         let arr = response.data.map((value) => value[index])
-
         result[item] = { type: { id: iconList[types[index]].index, value: types[index] }, classification: classifications[index], values: arr };
         return result;
     }, {})
@@ -126,6 +125,7 @@ export async function fetchData(url: string, setter: any) {
     }, {})
 
     setter({
+        ...data,
         cols: col_obj, classifications: classification_obj
     })
 }

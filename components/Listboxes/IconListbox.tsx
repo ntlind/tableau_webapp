@@ -11,13 +11,13 @@ interface CustomListBoxProps {
     iconMap?: any
 }
 
-export default function CustomListBox({ id, choices, selected, onChange, abbreviate = false, iconMap = null }: CustomListBoxProps) {
+export default function IconListbox({ id, choices, selected, onChange, abbreviate = false, iconMap = null }: CustomListBoxProps) {
     return (
         <div className="w-full">
             <Listbox value={selected} onChange={onChange}>
-                <div className="relative mt-1 flex justify-center items-center">
-                    <Listbox.Button className="form-format pl-1 pr-3">
-                        <span className="block truncate text-lg text-center align-middle">{abbreviate ? selected.value.match(/\b([A-Z])/g).join('') : (iconMap ? iconMap[selected.value].icon : selected.value)}</span>
+                <div className="relative flex items-center justify-center mt-1">
+                    <Listbox.Button className="pl-1 pr-3 form-format">
+                        <span className="block text-lg text-center truncate align-middle">{abbreviate ? selected.value.match(/\b([A-Z])/g).join('') : (iconMap ? iconMap[selected.value].icon : selected.value)}</span>
                         <span className="absolute inset-y-0 right-0 flex items-center pointer-events-none">
                             <SelectorIcon
                                 className="w-3 h-3 text-gray-400"
@@ -31,7 +31,7 @@ export default function CustomListBox({ id, choices, selected, onChange, abbrevi
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-xl border-theme border max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                        <Listbox.Options className="absolute z-50 w-full py-1 mt-1 overflow-auto text-base bg-white border rounded-md shadow-xl border-theme max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none">
                             {choices.map((option: any, optionIdx: number) => (
                                 <Listbox.Option
                                     key={optionIdx}

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 // @ts-ignore
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { getIndexOfString, copy, category_names, getItems, reorder, fetchData, getTypeIconList } from '../components/DragAndDrop/DragAndDrop'
-import CustomListBox from '../components/CustomListbox';
+import CustomListBox from './Listboxes/IconListbox';
 
 let dataURL = {
     line: 'https://raw.githubusercontent.com/facebook/prophet/main/examples/example_retail_sales.csv',
@@ -21,7 +21,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
 
     useEffect(() => {
         if (isInitialMount.current) {
-            fetchData(dataURL.bar, setData)
+            fetchData(dataURL.bar, data, setData)
             isInitialMount.current = false
         }
         if ((data.classifications) && (state.length === 0)) {
@@ -68,7 +68,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
     }
 
     return (
-        <div className='w-60 fixed left-0 h-screen border-r border-gray-200 z-1 shadow-lg'>
+        <div className='fixed left-0 z-10 h-screen border-r border-gray-200 shadow-lg w-60'>
             <div className='flex flex-col'>
                 <DragDropContext onDragEnd={onDragEndDuplicate}>
                     {state.map((el, ind) => (
