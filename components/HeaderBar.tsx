@@ -15,7 +15,7 @@ export default function HeaderBar({ state, setState, data, setData }: IProps) {
     let typeChoices = Object.keys(iconList).map((key, index) => (key))
 
     return (
-        <div className='fixed w-full shadow h-14 ml-60 dark:bg-slate-900 '>
+        <div className='fixed w-full shadow h-14 ml-60 dark:bg-slate-900 e'>
             <div className='flex flex-row items-center h-full px-2 py-4'>
                 <Listbox options={typeChoices} selected={data.chartType} data={data} setData={setData} iconMap={iconList} />
             </div>
