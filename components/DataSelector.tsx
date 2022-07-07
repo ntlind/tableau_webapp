@@ -68,7 +68,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
     }
 
     return (
-        <div className='fixed left-0 z-10 h-screen border-r border-gray-200 shadow-lg w-60'>
+        <div className='fixed left-0 z-10 h-screen border-r border-gray-200 shadow-lg w-60 dark:bg-slate-900'>
             <div className='flex flex-col'>
                 <DragDropContext onDragEnd={onDragEndDuplicate}>
                     {state.map((el, ind) => (
@@ -76,11 +76,11 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                             {(provided, snapshot) => (
                                 <div
                                     ref={provided.innerRef}
-                                    className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-6" : "bg-white p-4 pb-6"}
+                                    className={snapshot.isDraggingOver ? "bg-blue-50 p-4 pb-6 dark:bg-slate-500" : "bg-white p-4 pb-6 dark:bg-slate-900"}
                                     {...provided.droppableProps}
                                 >
                                     <div className={ind == 2 ? "border-t-2 border-gray-200 pt-6" : ""}></div>
-                                    <div className='font-bold underline'>
+                                    <div className='font-bold underline dark:text-white'>
                                         {category_names[ind]}
                                     </div>
                                     {el.map((item, index) => (
@@ -94,7 +94,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
-                                                    className={snapshot.isDragging ? "bg-blue-900 text-white select-none py-2 px-1 rounded-xl" : "bg-white select-none py-2"}
+                                                    className={snapshot.isDragging ? "bg-blue-900 dark:bg-slate-500 text-white select-none py-2 px-1 rounded-xl" : "bg-white dark:bg-slate-900 dark:text-white select-none py-2"}
                                                 >
                                                     <div className='flex flex-row items-center'>
                                                         <div className='pr-2'>

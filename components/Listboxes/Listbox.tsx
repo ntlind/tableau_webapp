@@ -20,7 +20,7 @@ export default function Listbox({ options, selected, data, setData, alignTextRig
     return (
         <Menu as="div" className="relative inline-block text-left">
             <div>
-                <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+                <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white ocus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-500 focus:ring-theme">
                     {selected}
                     <ChevronDownIcon className="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
                 </Menu.Button>
@@ -44,8 +44,8 @@ export default function Listbox({ options, selected, data, setData, alignTextRig
                                 {({ active }) => (
                                     <button
                                         className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                            'px-4 py-2 text-sm w-full text-left flex flex-row'
+                                            active ? 'bg-slate-100 text-gray-900 dark:bg-slate-500' : 'text-gray-700 dark:bg-slate-800',
+                                            'px-3 py-2 text-sm w-full text-left flex flex-row dark:text-white'
                                         )}
                                         // @ts-ignore
                                         onClick={e => setData({ ...data, chartType: e.target.innerText })}
