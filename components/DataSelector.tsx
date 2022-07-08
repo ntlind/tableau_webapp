@@ -80,7 +80,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                                     {...provided.droppableProps}
                                 >
                                     <div className={ind == 2 ? "border-t-2 border-gray-200 pt-6" : ""}></div>
-                                    <div className='font-bold underline dark:text-white'>
+                                    <div className='font-bold underline dark:text-white '>
                                         {category_names[ind]}
                                     </div>
                                     {el.map((item, index) => (

@@ -7,10 +7,11 @@ import HeaderBar from '../components/HeaderBar'
 
 const Home: NextPage = () => {
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
-  const [data, setData] = useState({ cols: {}, classifications: null, chartType: "Bar Chart" }); // has to start out empty or the droppable won't work
+  const [data, setData] = useState({ cols: {}, classifications: null, chartType: "Bar Chart", dark: false, bg: "#f8fafc" }); // has to start out empty or the droppable won't work
 
   useEffect(() => {
-  })
+    setData({ ...data, dark: window.matchMedia('(prefers-color-scheme: dark)').matches })
+  }, [])
 
   return (
     <div >
@@ -20,10 +21,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='w-screen h-screen'>
+      <main className={data.dark ? 'w-screen h-screen dark' : 'w-screen h-screen'}>
         <DataSelector state={state} setState={setState} data={data} setData={setData} />
         <HeaderBar state={state} setState={setState} data={data} setData={setData} />
-        <div className='h-full ml-60'>
+        <div className='h-full ml-60' style={{ background: data.bg }}>
           <div className='w-full h-full p-24'>
             <BarChart data={[1, 2, 3]} xVar={'Country'} yVar={'Value'} />
           </div>
