@@ -7,7 +7,9 @@ import HeaderBar from '../components/HeaderBar'
 
 const Home: NextPage = () => {
   const [state, setState] = useState([]); // has to start out empty or the droppable won't work
-  const [data, setData] = useState({ cols: {}, classifications: null, chartType: "Bar Chart", dark: false, bg: "#f8fafc" }); // has to start out empty or the droppable won't work
+  const [data, setData] = useState({
+    cols: {}, classifications: null, chartType: "Bar Chart", dark: false, bg: "#f8fafc", recentColors: ['#ff562e', '#0000bb', '#bb0091', '#f8005e']
+  });
 
   useEffect(() => {
     setData({ ...data, dark: window.matchMedia('(prefers-color-scheme: dark)').matches })

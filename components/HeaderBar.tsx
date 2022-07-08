@@ -3,7 +3,7 @@ import { AtSymbolIcon, PhoneIcon, VariableIcon, DocumentTextIcon, CalculatorIcon
 import { CalendarIcon } from '@heroicons/react/solid'
 import Switch from '../components/ToggleSwitch'
 import Listbox from './Listboxes/Listbox';
-import { HexColorPicker } from "react-colorful";
+import { HexColorPicker, HexColorInput } from "react-colorful";
 import useClickOutside from '../components/CustomHooks/useClickOutside'
 
 interface IProps {
@@ -17,7 +17,26 @@ function BackgroundColorPicker({ data, setData }: { data: any, setData: any }) {
     const [showPicker, setShowPicker] = useState(false);
     const popover = useRef(null);
 
-    const close = useCallback(() => setShowPicker(false), []);
+    useEffect(() => {
+        if (!data.recentColors.includes(data.bg)) {
+            updateRecentColors()
+        }
+    }, [showPicker])
+
+    function updateColor(e: string) {
+        setData({ ...data, bg: e })
+    }
+
+    function updateRecentColors() {
+        let recentColors = data.recentColors
+        recentColors.shift()
+        recentColors.push(data.bg)
+        setData({ ...data, recentColors: recentColors })
+    }
+
+    const close = useCallback(() => {
+        setShowPicker(false)
+    }, []);
     useClickOutside(popover, close);
 
     return (
@@ -28,7 +47,22 @@ function BackgroundColorPicker({ data, setData }: { data: any, setData: any }) {
             </div>
             <div className='absolute left-0 top-10'>
                 {showPicker &&
-                    <div ref={popover} >< HexColorPicker color={data.bg} onChange={e => setData({ ...data, bg: e })} />
+                    <div ref={popover} className='cursor-default'>
+                        <div className='bg-white rounded-b'>
+                            <HexColorPicker color={data.bg} onChange={e => updateColor(e)} />
+
+                            <div className='flex flex-row items-center justify-between px-2'>
+                                <div className='flex flex-row items-center justify-start'>
+                                    <div className='w-4 h-4 mr-1' style={{ background: data.bg }}></div>
+                                    <HexColorInput className='w-16 text-center uppercase' color={data.bg} onChange={e => updateColor(e)} />
+                                </div>
+                                <div className='flex flex-row items-center justify-end'>
+                                    {data.recentColors.map((color: string) => (
+                                        <button key={color} className='w-4 h-4 mr-1' style={{ background: color }} onClick={e => updateColor(color)}></button>)
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
