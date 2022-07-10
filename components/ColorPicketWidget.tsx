@@ -18,10 +18,10 @@ export default function ColorPickerWidget({ icon, color, recentPalette, updateCo
     useClickOutside(popover, close);
 
     return (
-        <button className='relative px-2 py-1 border rounded shadow-inner border-slate-400 dark:border-white' onClick={e => setShowPicker(true)}>
+        <button className='relative px-2 py-1 border rounded shadow-inner border-slate-300 dark:border-slate-600' onClick={e => setShowPicker(true)}>
             <div className='flex flex-col items-center justify-center space-y-[.1rem] dark:text-white text-slate-900'>
                 {icon}
-                <span className='w-4 h-[.4rem]' style={{ background: color }}></span>
+                <span className='w-4 h-[.4rem] border rounded-sm border-slate-500 dark:border-none' style={{ background: color }}></span>
             </div>
             <div className='absolute left-0 top-10'>
                 {showPicker &&

@@ -37,7 +37,7 @@ export default function Listbox({ options, selected, data, setData, alignTextRig
             >
                 <Menu.Items className={alignTextRight ? "absolute right-0 mt-2 origin-top-right bg-white rounded-md shadow-lg w-36 ring-1 ring-black ring-opacity-5 focus:outline-none" :
                     "absolute left-0 mt-2 origin-top-left bg-white rounded-md shadow-lg w-36 ring-1 ring-black ring-opacity-5 focus:outline-none"}>
-                    <div className="py-1 bg-slate-800">
+                    <div className="py-1 bg-white dark:bg-slate-800">
                         {/* @ts-ignore */}
                         {options.map((option, index) => (
                             <Menu.Item key={option}>
