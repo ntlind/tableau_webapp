@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { HexColorPicker, HexColorInput } from "react-colorful";
-import useClickOutside from '../components/CustomHooks/useClickOutside'
+import useClickOutside from './Utilities/useClickOutside'
 
 export default function ColorPickerWidget({ icon, color, recentPalette, updateColor, updatePalette }: { icon: any, color: string, recentPalette: Array<string>, updateColor: any, updatePalette?: any }) {
     const [showPicker, setShowPicker] = useState(false);
@@ -18,10 +18,10 @@ export default function ColorPickerWidget({ icon, color, recentPalette, updateCo
     useClickOutside(popover, close);
 
     return (
-        <button className='relative px-2 py-1 border rounded shadow-inner border-slate-300 dark:border-slate-600' onClick={e => setShowPicker(true)}>
-            <div className='flex flex-col items-center justify-center space-y-[.1rem] dark:text-white text-slate-900'>
+        <button className='relative px-2 py-1 border rounded shadow-inner border-zinc-300 dark:border-zinc-600' onClick={e => setShowPicker(true)}>
+            <div className='flex flex-col items-center justify-center space-y-[.1rem] dark:text-white text-zinc-900'>
                 {icon}
-                <span className='w-4 h-[.4rem] border rounded-sm border-slate-500 dark:border-none' style={{ background: color }}></span>
+                <span className='w-4 h-[.4rem] border rounded-sm border-zinc-500 dark:border-none' style={{ background: color }}></span>
             </div>
             <div className='absolute left-0 top-10'>
                 {showPicker &&

@@ -4,11 +4,11 @@ import { CalendarIcon } from '@heroicons/react/solid'
 import Switch from '../components/ToggleSwitch'
 import Listbox from './Listboxes/Listbox';
 import { HexColorPicker, HexColorInput } from "react-colorful";
-import useClickOutside from '../components/CustomHooks/useClickOutside'
+import useClickOutside from './Utilities/useClickOutside'
 import ColorPickerWidget from "../components/ColorPicketWidget"
 
 
-export default function HeaderBar({ state, setState, data, setData }: IProps) {
+export default function HeaderBar({ isOn, setIsOn, data, setData }: { isOn: boolean, setIsOn: any, data: any, setData: any }) {
     let iconList = getChartIconList()
     let typeChoices = Object.keys(iconList).map((key, index) => (key))
 
@@ -24,11 +24,11 @@ export default function HeaderBar({ state, setState, data, setData }: IProps) {
     }
 
     return (
-        <div className='fixed w-full pr-4 shadow h-14 pl-60 bg-slate-50 dark:bg-slate-900'>
+        <div className='fixed w-full pr-4 shadow h-14 pl-60 bg-zinc-50 dark:bg-zinc-900'>
             <div className='flex flex-row items-center justify-between h-full px-2 py-4 space-x-2'>
                 <Listbox options={typeChoices} selected={data.chartType} data={data} setData={setData} iconMap={iconList} />
                 <ColorPickerWidget icon={<CalendarIcon className='w-5 h-5 stroke-1' />} color={data.bg} recentPalette={data.recentColors} updateColor={updateColor} updatePalette={updateRecentPalette} />
-                <Switch isOn={data.dark} setIsOn={e => setData({ ...data, dark: e })} />
+                <Switch isOn={isOn} setIsOn={(e: any) => setIsOn(e)} />
             </div>
         </div >
     );

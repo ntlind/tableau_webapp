@@ -79,13 +79,6 @@ export const copy = (source, destination, droppableSource, droppableDestination)
     return result;
 };
 
-export let category_names = {
-    0: "Metrics",
-    1: "Dimensions",
-    2: "Y-Axis",
-    3: "X-Axis",
-    4: "Grouper"
-}
 
 export const getItems = (array, offset = 0) =>
     array.map(k => ({

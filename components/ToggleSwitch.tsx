@@ -13,7 +13,7 @@ export default function Switch({ isOn, setIsOn }: IProps) {
 
     return (
         <div
-            className={isOn ? "bg-slate-600 justify-end" : "bg-slate-200"}
+            className={isOn ? "bg-zinc-600 justify-end" : "bg-zinc-200"}
             style={{
                 width: "3.2rem",
                 padding: "0.25rem",
@@ -25,7 +25,7 @@ export default function Switch({ isOn, setIsOn }: IProps) {
         >
             {/* Switch knob */}
             <motion.div
-                className={isOn ? "items-center justify-center text-center bg-slate-900" : "items-center justify-center text-center bg-slate-50"}
+                className={isOn ? "items-center justify-center text-center bg-zinc-900" : "items-center justify-center text-center bg-zinc-50"}
                 style={{
                     width: "1.5rem",
                     height: "1.5rem",
@@ -40,7 +40,7 @@ export default function Switch({ isOn, setIsOn }: IProps) {
                     damping: 30,
                 }}
             >
-                {isOn ? <MoonIcon className="p-1 text-white" /> : <SunIcon className="text-slate-900" />}
+                {isOn ? <MoonIcon className="p-1 text-white" /> : <SunIcon className="text-zinc-900" />}
             </motion.div>
         </div>
     );
