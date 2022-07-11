@@ -30,7 +30,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
             let metric_array = Array(data.classifications!['metric'])
             let dimension_array = Array(data.classifications!['dimension'])
             // @ts-ignore
-            setState([...state, getItems(metric_array), getItems(dimension_array), [], [], [], [], []])
+            setState([...state, getItems(metric_array), getItems(dimension_array), [], [], [], [], [], []])
         }
 
     }, [data, state])
@@ -121,7 +121,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                         ))}
                         <div className={"border-t-2 border-gray-200 pt-6"}></div>
                         {/* Other Droppable Areas */}
-                        {state.slice(3, 8).map((el: any, ind: number) => (
+                        {state.slice(3, 9).map((el: any, ind: number) => (
                             <Droppable key={ind + 3} droppableId={`${ind + 3}`} isDropDisabled={false}>
                                 {(provided: any, snapshot: any) => (
                                     <div
@@ -168,6 +168,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                         ))}
                         {/* TODO make it so you can throw away items by dragging them outside of the draggable */}
                         {/* TODO only allow an entry to appear in one droppable */}
+                        {/* TODO turn the filters, colors, and sizes into boxes */}
                         {/* <button className='absolute z-10 theme-button rounded left-[4.5rem] bottom-6 w-24' onClick={(e) => setState([state[0], state[1], [], [], []])}>Reset</button> */}
                     </DragDropContext>
                     <div className='flex flex-row'>
