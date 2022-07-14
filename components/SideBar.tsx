@@ -2,7 +2,7 @@ import { type } from 'os';
 import { useEffect, useState, useRef } from 'react';
 // @ts-ignore
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { getIndexOfString, copy, getItems, reorder, fetchData, getTypeIconList } from './DragAndDrop/DragAndDrop'
+import { getIndexOfString, copy, move, getItems, reorder, fetchData, getTypeIconList } from './DragAndDrop/DragAndDrop'
 import CustomListBox from './Listboxes/IconListbox';
 import classNames from './Utilities/classNames'
 
@@ -30,7 +30,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
             let metric_array = Array(data.classifications!['metric'])
             let dimension_array = Array(data.classifications!['dimension'])
             // @ts-ignore
-            setState([...state, getItems(metric_array), getItems(dimension_array), [], [], [], [], [], []])
+            setState([...state, getItems(metric_array), getItems(dimension_array), [], [], []])
         }
 
     }, [data, state])
@@ -51,7 +51,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
             newState[sInd] = items;
             setState(newState);
         } else {
-            let result: any = copy(state[sInd], state[dInd], source, destination);
+            let result: any = move(state[sInd], state[dInd], source, destination);
             const newState: any = [...state];
             newState[sInd] = result[sInd];
             newState[dInd] = result[dInd];
@@ -69,7 +69,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
         setData({ ...newData })
     }
     return (
-        <div className='fixed left-0 z-10 flex flex-col justify-between h-screen border-r border-gray-200 w-60 bg-zinc-50 dark:bg-zinc-900'>
+        <div className='fixed left-0 z-10 flex flex-col justify-between h-screen border-r border-gray-200 w-60 bg-zinc-50 dark:bg-zinc-900 dark:text-white'>
             <div className='px-4'>
                 <div className='flex flex-col'>
                     <div className='flex items-center justify-center'>
@@ -121,8 +121,8 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                         ))}
                         <div className={"border-t-2 border-gray-200 pt-6"}></div>
                         {/* Other Droppable Areas */}
-                        {state.slice(3, 9).map((el: any, ind: number) => (
-                            <Droppable key={ind + 3} droppableId={`${ind + 3}`} isDropDisabled={false}>
+                        {state.slice(2, 5).map((el: any, ind: number) => (
+                            <Droppable key={ind + 2} droppableId={`${ind + 2}`} isDropDisabled={false}>
                                 {(provided: any, snapshot: any) => (
                                     <div
                                         ref={provided.innerRef}
@@ -133,9 +133,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                                             {{
                                                 0: "Rows",
                                                 1: "Columns",
-                                                2: "Filters",
-                                                3: "Colors",
-                                                4: "Sizes",
+                                                2: "Groupers",
                                             }[ind]}
                                         </div>
                                         {el.map((item: any, index: number) => (
@@ -171,11 +169,6 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
                         {/* TODO turn the filters, colors, and sizes into boxes */}
                         {/* <button className='absolute z-10 theme-button rounded left-[4.5rem] bottom-6 w-24' onClick={(e) => setState([state[0], state[1], [], [], []])}>Reset</button> */}
                     </DragDropContext>
-                    <div className='flex flex-row'>
-                        <div>
-                            blah
-                        </div>
-                    </div>
                 </div>
             </div>
             <button className='flex flex-row items-center justify-center h-24 border-t-[.5px] border-zinc-200 hover:bg-zinc-100'>

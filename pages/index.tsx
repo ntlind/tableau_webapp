@@ -9,13 +9,36 @@ const Home: NextPage = () => {
   const [state, setState] = useState([]);
   const [dark, setDark] = useState(false)
   const [data, setData] = useState({
-    cols: {}, classifications: null, chartType: "Bar Chart", bg: "#fff", recentColors: ['#ff562e', '#0000bb', '#bb0091', '#f8005e']
+    cols: {}, classifications: null, chartType: "BarChart", bg: "#fff", recentColors: ['#ff562e', '#0000bb', '#bb0091', '#f8005e']
   });
 
   useEffect(() => {
-    // TODO
-    // setDark(window.matchMedia('(prefers-color-scheme: dark)').matches)
-  }, [])
+
+  }, [state])
+
+  function getArrayItems(index: number) {
+    return state[index] && state[index].map((element) => element.content)
+  }
+
+  function getRows() {
+    return getArrayItems(2)
+  }
+
+  function getColumns() {
+    return getArrayItems(3)
+  }
+
+  function getSelectionDimensions() {
+    return getArrayItems(2) && getArrayItems(2).concat(getArrayItems(3)).map(element => data.cols && data.cols[element] && data.cols[element].classification)
+  }
+
+  function isBarChartReady() {
+    return getSelectionDimensions() && ['metric', 'dimension'].every((value) => getSelectionDimensions().includes(value)) && data.chartType == 'BarChart'
+  }
+
+  function getGroupers() {
+    return getArrayItems(4)
+  }
 
   return (
     <div >
@@ -27,10 +50,10 @@ const Home: NextPage = () => {
 
       <main className={dark ? 'w-screen h-screen dark' : 'w-screen h-screen'}>
         <DataSelector state={state} setState={setState} data={data} setData={setData} />
-        {/* <HeaderBar isOn={dark} setIsOn={(e: any) => setDark(e)} data={data} setData={setData} /> */}
+        <HeaderBar isOn={dark} setIsOn={(e: any) => setDark(e)} data={data} setData={setData} />
         <div className='h-full ml-60' style={{ background: data.bg }}>
           <div className='w-full h-full p-24'>
-            <BarChart data={[1, 2, 3]} xVar={'Country'} yVar={'Value'} />
+            {isBarChartReady() && <BarChart data={[1, 2, 3]} xVar={getColumns()[0]} yVar={getRows()[0]} />}
           </div>
         </div>
       </main>

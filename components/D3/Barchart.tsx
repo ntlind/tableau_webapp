@@ -49,7 +49,7 @@ export default function Barchart(props: IProps) {
 
                     // Add Y axis
                     var y = d3.scaleLinear()
-                        .domain([0, 13000])
+                        .domain([0, Math.max.apply([], (data.map(e => (e.Value))))])
                         .range([height, 0]);
                     svg.append("g")
                         .call(d3.axisLeft(y));
@@ -82,9 +82,9 @@ export default function Barchart(props: IProps) {
         }, [props.data, d3Container.current, parentRef])
 
     return (
-        <div ref={parentRef} className='h-full w-full'>
+        <div ref={parentRef} className='w-full h-full'>
             <svg
-                className="d3-component w-full h-full"
+                className="w-full h-full d3-component"
                 ref={d3Container}
             />
         </div>
