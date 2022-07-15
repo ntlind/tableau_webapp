@@ -4,17 +4,27 @@ import DataSelector from '../components/SideBar'
 import BarChart from '../components/D3/Barchart'
 import { useEffect, useState, useRef } from 'react'
 import HeaderBar from '../components/HeaderBar'
+import Dropzone from 'react-dropzone'
+import { UploadIcon } from '@heroicons/react/solid'
 
 const Home: NextPage = () => {
+  const isMounted = useRef(false)
   const [state, setState] = useState([]);
   const [dark, setDark] = useState(false)
+  const [file, setFile] = useState(null)
   const [data, setData] = useState({
     cols: {}, classifications: null, chartType: "BarChart", bg: "#fff", recentColors: ['#ff562e', '#0000bb', '#bb0091', '#f8005e']
   });
 
-  useEffect(() => {
 
-  }, [state])
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, [state, file])
+
 
   function getArrayItems(index: number) {
     return state[index] && state[index].map((element) => element.content)
@@ -40,6 +50,34 @@ const Home: NextPage = () => {
     return getArrayItems(4)
   }
 
+  function DropZoneComponent() {
+    return (
+      <Dropzone
+        maxFiles={1}
+        // noClick={true}
+        // noDrag={true}
+        maxSize={1024 * 1024 * 50}
+        // accept=".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/plain, application/vnd.ms-excel"
+        onDrop={files => setFile(files)}
+      >
+        {({ getRootProps, getInputProps }) => (
+          <div className="col-span-12 lg:col-span-3">
+            <section className='flex items-center justify-center w-full mt-4 border-2 border-gray-400 border-dashed lg:mt-0 h-screen-5/12 lg:h-screen-9/12 2xl:h-screen-10/12'>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <UploadIcon className='w-20 h-20 mb-3 opacity-50 fill-gray-500' />
+                  <div className="text-xl font-semibold xl:text-2xl">Click or drop files here.</div>
+                  <div className="mx-4 mt-2 text-gray-500">Accepted formats are csv and xlsx</div>
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+      </Dropzone>
+    )
+  }
+
   return (
     <div >
       <Head>
@@ -53,7 +91,7 @@ const Home: NextPage = () => {
         <HeaderBar isOn={dark} setIsOn={(e: any) => setDark(e)} data={data} setData={setData} />
         <div className='h-full ml-60' style={{ background: data.bg }}>
           <div className='w-full h-full p-24'>
-            {isBarChartReady() && <BarChart data={[1, 2, 3]} xVar={getColumns()[0]} yVar={getRows()[0]} />}
+            {file ? (isBarChartReady() && <BarChart data={[1, 2, 3]} xVar={getColumns()[0]} yVar={getRows()[0]} />) : <DropZoneComponent />}
           </div>
         </div>
       </main>

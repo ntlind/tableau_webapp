@@ -12,6 +12,7 @@
     "@headlessui/react": "^1.6.5",
     "@heroicons/react": "^1.0.6",
     "@tailwindcss/typography": "^0.5.2",
+    "axios": "^0.27.2",
     "d3": "^7.5.0",
     "framer-motion": "^6.4.2",
     "moment": "^2.29.3",
@@ -20,7 +21,8 @@
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-colorful": "^5.5.1",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.2"
   },
   "devDependencies": {
     "@types/node": "18.0.0",
