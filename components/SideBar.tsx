@@ -23,7 +23,7 @@ export default function DataSelector({ state, setState, data, setData }: IProps)
 
     useEffect(() => {
         if (isInitialMount.current) {
-            fetchData(dataURL.bar, data, setData)
+            // fetchData(dataURL.bar, data, setData)
             isInitialMount.current = false
         }
         if ((data.classifications) && (state.length === 0)) {

@@ -6,24 +6,50 @@ import { useEffect, useState, useRef } from 'react'
 import HeaderBar from '../components/HeaderBar'
 import Dropzone from 'react-dropzone'
 import { UploadIcon } from '@heroicons/react/solid'
+import * as d3 from 'd3'
+import Papa from 'papaparse'
+import { getType, getTypeClassification, getTypeIconList } from '../components/DragAndDrop/DragAndDrop'
 
 const Home: NextPage = () => {
   const isMounted = useRef(false)
   const [state, setState] = useState([]);
   const [dark, setDark] = useState(false)
-  const [file, setFile] = useState(null)
+  const [isLoaded, setIsLoaded] = useState(false)
   const [data, setData] = useState({
-    cols: {}, classifications: null, chartType: "BarChart", bg: "#fff", recentColors: ['#ff562e', '#0000bb', '#bb0091', '#f8005e']
+    data: null, cols: {}, classifications: null, chartType: "BarChart", bg: "#fff", recentColors: ['#ff562e', '#0000bb', '#bb0091', '#f8005e']
   });
 
 
   useEffect(() => {
-    isMounted.current = true;
+
+    console.log(data)
+
+    if ((data.data != null) && (isLoaded == false)) {
+      let csv = d3.csv(data.data)
+      csv.then(response => {
+        let columns = response.columns
+        let types = Object.values(response[0]).map((key, val) => getType(key))
+        let classifications = types.map(e => getTypeClassification(e))
+        let iconList = getTypeIconList()
+
+        let col_obj = columns.reduce(function (result, item, index, array) {
+          let values = response.map((value) => value[item])
+          result[item] = { type: { id: iconList[types[index]].index, value: types[index] }, classification: classifications[index], values: values };
+          return result;
+        }, {})
+
+        setData({
+          ...data,
+          cols: col_obj
+        })
+      })
+      setIsLoaded(true)
+    }
 
     return () => {
       isMounted.current = false;
     };
-  }, [state, file])
+  }, [state, data])
 
 
   function getArrayItems(index: number) {
@@ -58,7 +84,14 @@ const Home: NextPage = () => {
         // noDrag={true}
         maxSize={1024 * 1024 * 50}
         // accept=".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/plain, application/vnd.ms-excel"
-        onDrop={files => setFile(files)}
+        onDrop={async ([file]) => {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var contents = e.target.result;
+            setData({ ...data, data: contents });
+          };
+          reader.readAsDataURL(file);
+        }}
       >
         {({ getRootProps, getInputProps }) => (
           <div className="col-span-12 lg:col-span-3">
@@ -91,7 +124,7 @@ const Home: NextPage = () => {
         <HeaderBar isOn={dark} setIsOn={(e: any) => setDark(e)} data={data} setData={setData} />
         <div className='h-full ml-60' style={{ background: data.bg }}>
           <div className='w-full h-full p-24'>
-            {file ? (isBarChartReady() && <BarChart data={[1, 2, 3]} xVar={getColumns()[0]} yVar={getRows()[0]} />) : <DropZoneComponent />}
+            {data.data ? (isBarChartReady() && <BarChart data={[1, 2, 3]} xVar={getColumns()[0]} yVar={getRows()[0]} />) : <DropZoneComponent />}
           </div>
         </div>
       </main>
