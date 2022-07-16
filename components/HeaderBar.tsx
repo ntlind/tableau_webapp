@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { AtSymbolIcon, PhoneIcon, VariableIcon, DocumentTextIcon, CalculatorIcon } from '@heroicons/react/outline'
+import { CalculatorIcon } from '@heroicons/react/outline'
 import { CalendarIcon } from '@heroicons/react/solid'
 import Switch from '../components/ToggleSwitch'
 import Listbox from './Listboxes/Listbox';
-import { HexColorPicker, HexColorInput } from "react-colorful";
-import useClickOutside from './Utilities/useClickOutside'
 import ColorPickerWidget from "../components/ColorPicketWidget"
+import LoadD3File from './LoadD3File';
 
 
 export default function HeaderBar({ isOn, setIsOn, data, setData }: { isOn: boolean, setIsOn: any, data: any, setData: any }) {
@@ -28,6 +27,13 @@ export default function HeaderBar({ isOn, setIsOn, data, setData }: { isOn: bool
             <div className='flex flex-row items-center justify-between h-full px-2 py-4 space-x-2'>
                 <Listbox options={typeChoices} selected={data.chartType} data={data} setData={setData} iconMap={iconList} />
                 <ColorPickerWidget icon={<CalendarIcon className='w-5 h-5 stroke-1' />} color={data.bg} recentPalette={data.recentColors} updateColor={updateColor} updatePalette={updateRecentPalette} />
+                <button className='theme-button-outline' onClick={e => {
+                    LoadD3File('/air_passengers.csv')
+                        .then((response: any) => {
+                            setData({ ...data, data: response['array'], cols: response['col_obj'] })
+                        })
+                }
+                } >Load test data</button>
                 <Switch isOn={isOn} setIsOn={(e: any) => setIsOn(e)} />
             </div>
         </div >

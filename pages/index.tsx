@@ -7,15 +7,14 @@ import HeaderBar from '../components/HeaderBar'
 import Dropzone from 'react-dropzone'
 import { UploadIcon } from '@heroicons/react/solid'
 import * as d3 from 'd3'
-import Papa from 'papaparse'
-import { getType, getTypeClassification, getTypeIconList } from '../components/DragAndDrop/DragAndDrop'
+import LoadD3File from '../components/LoadD3File'
 
 const Home: NextPage = () => {
   const isMounted = useRef(false)
-  const [state, setState] = useState([]);
+  const [state, setState] = useState<any>([]);
   const [dark, setDark] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [data, setData] = useState({
+  const [data, setData] = useState<any>({
     data: null, cols: {}, classifications: null, chartType: "BarChart", bg: "#fff", recentColors: ['#ff562e', '#0000bb', '#bb0091', '#f8005e']
   });
 
@@ -25,24 +24,7 @@ const Home: NextPage = () => {
     console.log(data)
 
     if ((data.data != null) && (isLoaded == false)) {
-      let csv = d3.csv(data.data)
-      csv.then(response => {
-        let columns = response.columns
-        let types = Object.values(response[0]).map((key, val) => getType(key))
-        let classifications = types.map(e => getTypeClassification(e))
-        let iconList = getTypeIconList()
 
-        let col_obj = columns.reduce(function (result, item, index, array) {
-          let values = response.map((value) => value[item])
-          result[item] = { type: { id: iconList[types[index]].index, value: types[index] }, classification: classifications[index], values: values };
-          return result;
-        }, {})
-
-        setData({
-          ...data,
-          cols: col_obj
-        })
-      })
       setIsLoaded(true)
     }
 
@@ -53,7 +35,7 @@ const Home: NextPage = () => {
 
 
   function getArrayItems(index: number) {
-    return state[index] && state[index].map((element) => element.content)
+    return state[index] && state[index].map((element: any) => element.content)
   }
 
   function getRows() {
@@ -65,7 +47,7 @@ const Home: NextPage = () => {
   }
 
   function getSelectionDimensions() {
-    return getArrayItems(2) && getArrayItems(2).concat(getArrayItems(3)).map(element => data.cols && data.cols[element] && data.cols[element].classification)
+    return getArrayItems(2) && getArrayItems(2).concat(getArrayItems(3)).map((element: any) => data.cols && data.cols[element] && data.cols[element].classification)
   }
 
   function isBarChartReady() {
@@ -87,8 +69,13 @@ const Home: NextPage = () => {
         onDrop={async ([file]) => {
           var reader = new FileReader();
           reader.onload = function (e) {
-            var contents = e.target.result;
-            setData({ ...data, data: contents });
+            var contents = e && e.target?.result;
+
+            let csv = LoadD3File(contents as string)
+              .then((response: any) => {
+                setData({ ...data, data: response['array'], cols: response['col_obj'] })
+              })
+
           };
           reader.readAsDataURL(file);
         }}
