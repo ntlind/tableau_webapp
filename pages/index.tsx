@@ -6,8 +6,8 @@ import { useEffect, useState, useRef } from 'react'
 import HeaderBar from '../components/HeaderBar'
 import Dropzone from 'react-dropzone'
 import { UploadIcon } from '@heroicons/react/solid'
-import * as d3 from 'd3'
 import LoadD3File from '../components/LoadD3File'
+import DataTable from '../components/DataTable'
 
 const Home: NextPage = () => {
   const isMounted = useRef(false)
@@ -20,8 +20,6 @@ const Home: NextPage = () => {
 
 
   useEffect(() => {
-
-    console.log(data)
 
     if ((data.data != null) && (isLoaded == false)) {
 
@@ -81,14 +79,14 @@ const Home: NextPage = () => {
         }}
       >
         {({ getRootProps, getInputProps }) => (
-          <div className="col-span-12 lg:col-span-3">
-            <section className='flex items-center justify-center w-full mt-4 border-2 border-gray-400 border-dashed lg:mt-0 h-screen-5/12 lg:h-screen-9/12 2xl:h-screen-10/12'>
+          <div className="h-full col-span-12 lg:col-span-3">
+            <section className='flex items-center justify-center w-full h-full mt-4 border-2 border-dashed border-zinc-400 lg:mt-0'>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <div className="flex flex-col items-center justify-center h-full text-center">
-                  <UploadIcon className='w-20 h-20 mb-3 opacity-50 fill-gray-500' />
+                  <UploadIcon className='w-20 h-20 mb-3 opacity-50 fill-zinc-500' />
                   <div className="text-xl font-semibold xl:text-2xl">Click or drop files here.</div>
-                  <div className="mx-4 mt-2 text-gray-500">Accepted formats are csv and xlsx</div>
+                  <div className="mx-4 mt-2 text-zinc-500">Accepted formats are csv and xlsx</div>
                 </div>
               </div>
             </section>
@@ -106,12 +104,15 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={dark ? 'w-screen h-screen dark' : 'w-screen h-screen'}>
+      <main className={dark ? 'w-screen h-screen  dark' : 'w-screen h-screen'}>
         <DataSelector state={state} setState={setState} data={data} setData={setData} />
         <HeaderBar isOn={dark} setIsOn={(e: any) => setDark(e)} data={data} setData={setData} />
-        <div className='h-full ml-60' style={{ background: data.bg }}>
-          <div className='w-full h-full p-24'>
+        <div className='grid h-full grid-rows-4 ml-60' style={{ background: data.bg }}>
+          <div className='w-full row-span-3 p-24'>
             {data.data ? (isBarChartReady() && <BarChart data={[1, 2, 3]} xVar={getColumns()[0]} yVar={getRows()[0]} />) : <DropZoneComponent />}
+          </div>
+          <div className='relative row-span-1 overflow-x-auto border-t border-zinc-200'>
+            {data.data && <DataTable array={data.data} />}
           </div>
         </div>
       </main>
